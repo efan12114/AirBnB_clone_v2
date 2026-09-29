@@ -1,4 +1,39 @@
-#!/usr/bin/python3
+def do_create(self, arg):
+        """Creates a new instance of a class"""
+        args = arg.split()
+        if len(args) == 0:
+            print("** class name missing **")
+            return False
+        if args[0] not in self.classes:
+            print("** class doesn't exist **")
+            return False
+
+        new_instance = self.classes[args[0]]()
+        for param in args[1:]:
+            if "=" in param:
+                key, value = param.split('=', 1)
+                
+                # Handle strings
+                if value.startswith('"') and value.endswith('"'):
+                    value = value[1:-1].replace('_', ' ')
+                    value = value.replace('\\"', '"')
+                # Handle floats
+                elif '.' in value:
+                    try:
+                        value = float(value)
+                    except ValueError:
+                        continue
+                # Handle integers
+                else:
+                    try:
+                        value = int(value)
+                    except ValueError:
+                        continue
+                        
+                setattr(new_instance, key, value)
+                
+        new_instance.save()
+        print(new_instance.id)#!/usr/bin/python3
 """Defines the HBNBCommand console entry point."""
 import cmd
 import shlex
