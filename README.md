@@ -7,3 +7,5 @@ This project is the first step towards building a full-stack AirBnB clone. It es
 ### Starting the Console
 ```bash
 ./console.py
+## Authors
+* **v2 Team**: Efan Addis, Keza teta keffa lyssa
