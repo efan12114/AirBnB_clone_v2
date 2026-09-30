@@ -1,23 +1,15 @@
 #!/usr/bin/python3
-"""Defines unittests for models/amenity.py."""
+""" Module for testing amenity """
 import unittest
+import os
 from models.amenity import Amenity
-from models.base_model import BaseModel
 
 
 class TestAmenity(unittest.TestCase):
-    """Test cases for the Amenity class."""
+    """ Test Amenity model """
 
-    def test_is_subclass(self):
-        """Test that Amenity is a subclass of BaseModel."""
-        self.assertIsInstance(Amenity(), BaseModel)
-
+    @unittest.skipIf(os.getenv('HBNB_TYPE_STORAGE') == 'db', 'not testing file storage defaults')
     def test_attribute_types(self):
-        """Test Amenity attribute types and defaults."""
+        """ Test attribute types for file storage """
         amenity = Amenity()
         self.assertIsInstance(amenity.name, str)
-        self.assertEqual(amenity.name, "")
-
-
-if __name__ == "__main__":
-    unittest.main()

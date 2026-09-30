@@ -1,3 +1,4 @@
+#!/usr/bin/python3
 def do_create(self, arg):
         """Creates a new instance of a class"""
         args = arg.split()
@@ -75,18 +76,50 @@ class HBNBCommand(cmd.Cmd):
         pass
 
     def do_create(self, arg):
-        """Creates a new instance of a class, saves it, and prints id."""
-        args = shlex.split(arg)
+        """Creates a new instance of a class with given parameters"""
+        args = arg.split()
         if len(args) == 0:
             print("** class name missing **")
             return
-        if args[0] not in self.__classes:
-            print("** class doesn't exist **")
-            return
-        new_instance = self.__classes[args[0]]()
+
+        class_name = args[0]
+
+        # Resolve class across different console template implementations
+        cls = None
+        if 'classes' in globals() and isinstance(globals()['classes'], dict) and class_name in globals()['classes']:
+            cls = globals()['classes'][class_name]
+        elif '_HBNBCommand__classes' in globals() and class_name in globals()['_HBNBCommand__classes']:
+            cls = globals()['_HBNBCommand__classes'][class_name]
+        elif hasattr(self, 'classes') and isinstance(self.classes, dict) and class_name in self.classes:
+            cls = self.classes[class_name]
+        else:
+            try:
+                cls = eval(class_name)
+            except (NameError, TypeError):
+                print("** class doesn't exist **")
+                return
+
+        kwargs = {}
+        for param in args[1:]:
+            if "=" in param:
+                key, val = param.split("=", 1)
+                if val.startswith('"') and val.endswith('"'):
+                    val = val[1:-1].replace('_', ' ').replace('\"', '"')
+                elif '.' in val:
+                    try:
+                        val = float(val)
+                    except ValueError:
+                        continue
+                else:
+                    try:
+                        val = int(val)
+                    except ValueError:
+                        continue
+                kwargs[key] = val
+
+        new_instance = cls(**kwargs)
         new_instance.save()
         print(new_instance.id)
-
     def do_show(self, arg):
         """Prints string representation of instance based on class and id."""
         args = shlex.split(arg)

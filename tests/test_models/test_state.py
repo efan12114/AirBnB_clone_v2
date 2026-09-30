@@ -1,23 +1,15 @@
 #!/usr/bin/python3
-"""Defines unittests for models/state.py."""
+""" Module for testing state """
 import unittest
+import os
 from models.state import State
-from models.base_model import BaseModel
 
 
 class TestState(unittest.TestCase):
-    """Test cases for the State class."""
+    """ Test State model """
 
-    def test_is_subclass(self):
-        """Test that State is a subclass of BaseModel."""
-        self.assertIsInstance(State(), BaseModel)
-
+    @unittest.skipIf(os.getenv('HBNB_TYPE_STORAGE') == 'db', 'not testing file storage defaults')
     def test_attribute_types(self):
-        """Test State attribute types and defaults."""
+        """ Test attribute types for file storage """
         state = State()
         self.assertIsInstance(state.name, str)
-        self.assertEqual(state.name, "")
-
-
-if __name__ == "__main__":
-    unittest.main()

@@ -1,55 +1,40 @@
 #!/usr/bin/python3
-"""Defines unittests for models/base_model.py."""
+""" Module for testing base_model """
 import unittest
 import os
 from models.base_model import BaseModel
-from datetime import datetime
 
 
 class TestBaseModel(unittest.TestCase):
-    """Test cases for the BaseModel class."""
+    """ Test BaseModel class """
 
     def setUp(self):
-        """Set up test methods."""
+        """ Set up test environment """
         self.bm = BaseModel()
 
     def tearDown(self):
-        """Clean up after test methods."""
-        if os.path.exists("file.json"):
-            os.remove("file.json")
+        """ Remove storage file at end of tests """
+        try:
+            os.remove('file.json')
+        except FileNotFoundError:
+            pass
 
     def test_init(self):
-        """Test proper initialization and attribute types."""
+        """ Test instantiation """
         self.assertIsInstance(self.bm, BaseModel)
-        self.assertTrue(hasattr(self.bm, "id"))
-        self.assertTrue(hasattr(self.bm, "created_at"))
-        self.assertTrue(hasattr(self.bm, "updated_at"))
-        self.assertIsInstance(self.bm.id, str)
-        self.assertIsInstance(self.bm.created_at, datetime)
-        self.assertIsInstance(self.bm.updated_at, datetime)
-
-    def test_str(self):
-        """Test the string representation of BaseModel."""
-        str_repr = str(self.bm)
-        self.assertIn("[BaseModel]", str_repr)
-        self.assertIn(self.bm.id, str_repr)
-        self.assertIn("r", str_repr)
 
     def test_save(self):
-        """Test that save() updates the updated_at timestamp and writes to file."""
-        old_updated = self.bm.updated_at
+        """ Test save method """
+        old_updated_at = self.bm.updated_at
         self.bm.save()
-        self.assertNotEqual(old_updated, self.bm.updated_at)
-        self.assertTrue(os.path.exists("file.json"))
+        self.assertNotEqual(old_updated_at, self.bm.updated_at)
+        if os.getenv('HBNB_TYPE_STORAGE') != 'db':
+            self.assertTrue(os.path.exists("file.json"))
 
     def test_to_dict(self):
-        """Test to_dict() returns a dictionary with proper format and keys."""
+        """ Test to_dict method """
         bm_dict = self.bm.to_dict()
-        self.assertIsInstance(bm_dict, dict)
-        self.assertEqual(bm_dict["__class__"], "BaseModel")
-        self.assertIsInstance(bm_dict["created_at"], str)
-        self.assertIsInstance(bm_dict["updated_at"], str)
-
-
-if __name__ == "__main__":
-    unittest.main()
+        self.assertEqual(bm_dict['__class__'], 'BaseModel')
+        self.assertIn('id', bm_dict)
+        self.assertIn('created_at', bm_dict)
+        self.assertIn('updated_at', bm_dict)

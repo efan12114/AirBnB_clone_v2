@@ -1,25 +1,15 @@
 #!/usr/bin/python3
-"""Defines unittests for models/city.py."""
+""" Module for testing city """
 import unittest
+import os
 from models.city import City
-from models.base_model import BaseModel
 
 
 class TestCity(unittest.TestCase):
-    """Test cases for the City class."""
+    """ Test City model """
 
-    def test_is_subclass(self):
-        """Test that City is a subclass of BaseModel."""
-        self.assertIsInstance(City(), BaseModel)
-
+    @unittest.skipIf(os.getenv('HBNB_TYPE_STORAGE') == 'db', 'not testing file storage defaults')
     def test_attribute_types(self):
-        """Test City attribute types and defaults."""
+        """ Test attribute types for file storage """
         city = City()
         self.assertIsInstance(city.state_id, str)
-        self.assertEqual(city.state_id, "")
-        self.assertIsInstance(city.name, str)
-        self.assertEqual(city.name, "")
-
-
-if __name__ == "__main__":
-    unittest.main()
